@@ -436,11 +436,18 @@ async function translateComment(commentId) {
             headers: { Accept: 'application/json', 'Content-Type': 'application/json' },
             body: JSON.stringify({ text: originalText, source: 'auto', target: targetLanguage })
         });
+        const responseBody = await response.text();
         let payload;
         try {
-            payload = await response.json();
+            payload = JSON.parse(responseBody);
         } catch (error) {
-            throw new Error('The translation service returned an invalid response.');
+            const contentType = response.headers.get('content-type') || 'unknown content type';
+            const detail = responseBody.replace(/<[^>]*>/gu, ' ').replace(/\s+/gu, ' ').trim().slice(0, 120);
+            throw new Error(
+                `Translation endpoint returned HTTP ${response.status} (${contentType}), not JSON. ` +
+                `Check that OMNITHREAD_TRANSLATION_URL points to your provider's /translate endpoint.` +
+                (detail ? ` Response: ${detail}` : '')
+            );
         }
         if (!response.ok) {
             throw new Error(payload.error || `Translation failed (${response.status}).`);

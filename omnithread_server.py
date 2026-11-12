@@ -60,7 +60,15 @@ class OmniThreadHandler(SimpleHTTPRequestHandler):
             return
         endpoint = os.environ.get("OMNITHREAD_TRANSLATION_URL", "").strip()
         if not endpoint:
-            self._send_json(503, {"error": "Translation is not configured on this server."})
+            self._send_json(
+                503,
+                {
+                    "error": (
+                        "Translation is not configured. Set OMNITHREAD_TRANSLATION_URL "
+                        "to your provider's /translate endpoint and restart the server."
+                    )
+                },
+            )
             return
         try:
             payload = self._read_json()
