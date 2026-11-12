@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OmniThread — Next-Gen Multilingual Commenting & Moderation Engine</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="static/css/style.css">
+</head>
+<body data-theme="dark">
+    <div class="ambient-glow bg-glow-1"></div>
+    <div class="ambient-glow bg-glow-2"></div>
+    <header class="app-header">
+        <div class="brand">
+            <div class="brand-icon"><i class="fa-solid fa-comments"></i></div>
+            <div class="brand-text">
+                <h1>OmniThread</h1>
+                <span class="badge badge-pro">Enterprise v3.0</span>
+            </div>
+        </div>
+        <div class="header-controls">
+            <div class="user-selector">
+                <label><i class="fa-solid fa-user-gear"></i> Active Persona:</label>
+                <select id="currentUserSelect" onchange="switchUser(this.value)">
+                    <option value="alex_m">Alex Morgan (US) [Admin]</option>
+                    <option value="yuki_t">Yuki Tanaka (JP)</option>
+                    <option value="priya_s">Priya Sharma (IN)</option>
+                    <option value="elena_r">Elena Rostova (RU)</option>
+                    <option value="spammer_99">Suspicious Bot (Flagged)</option>
+                </select>
+            </div>
+            <nav class="auth-nav" aria-label="Account">
+                <a href="login.html">Sign in</a>
+                <a class="btn btn-primary btn-small" href="register.html">Create account</a>
+            </nav>
+            <button class="btn btn-icon" id="themeToggle" onclick="toggleTheme()" title="Toggle Theme Mode">
+                <i class="fa-solid fa-moon"></i>
+            </button>
+        </div>
+    </header>
+    <main class="main-container">
+        <aside class="sidebar">
+            <div class="card glass-card">
+                <h3><i class="fa-solid fa-shield-halved text-accent"></i> Moderation Sentinel</h3>
+                <div class="stat-grid">
+                    <div class="stat-box"><span class="stat-num" id="statFiltered">0</span><span class="stat-label">Auto-Blocked</span></div>
+                    <div class="stat-box"><span class="stat-num" id="statFlagged">0</span><span class="stat-label">Mod Queue</span></div>
+                    <div class="stat-box"><span class="stat-num" id="statRateLimit">0/3</span><span class="stat-label">Rate Limit</span></div>
+                </div>
+                <div class="sentinel-status"><span class="pulse-dot"></span> <span id="dbStatus">Checking database connection…</span></div>
+            </div>
+            <div class="card glass-card admin-panel">
+                <div class="card-header">
+                    <h3><i class="fa-solid fa-user-shield"></i> Admin Audit Queue</h3>
+                    <span class="badge" id="reportBadge">0 Reports</span>
+                </div>
+                <div id="adminReportQueue" class="report-queue">
+                    <p class="empty-state">No flagged comments pending review.</p>
+                </div>
+            </div>
+            <div class="card glass-card admin-panel">
+                <h3><i class="fa-solid fa-list-check"></i> Moderation History</h3>
+                <div id="moderationHistory" class="moderation-history">
+                    <p class="empty-state">No moderation activity recorded yet.</p>
+                </div>
+            </div>
+            <div class="card glass-card">
+                <h3><i class="fa-solid fa-sliders"></i> Engine Controls</h3>
+                <div class="config-item">
+                    <label>Edit Window (mins):</label>
+                    <input type="number" id="cfgEditLimit" value="5" min="1" max="60" onchange="updateConfig()">
+                </div>
+                <div class="config-item">
+                    <label>Rate Threshold (per min):</label>
+                    <input type="number" id="cfgRateLimit" value="3" min="1" max="10" onchange="updateConfig()">
+                </div>
+                <div class="config-item">
+                    <label>Target Language:</label>
+                    <select id="userPreferredLang" onchange="updatePreferredLang(this.value)">
+                        <option value="en">English (US)</option>
+                        <option value="es">Español</option>
+                        <option value="ja">日本語 (Japanese)</option>
+                        <option value="hi">हिन्दी (Hindi)</option>
+                        <option value="fr">Français</option>
+                        <option value="ru">Русский (Russian)</option>
+                    </select>
+                </div>
+                <p class="config-note">Comments use local SQLite storage. Non-sample translations send comment text to the configured translation provider.</p>
+            </div>
+        </aside>
+        <section class="comment-section">
+            <article class="topic-header glass-card">
+                <span class="topic-category"><i class="fa-solid fa-globe"></i> Global Discussion</span>
+                <h2>Architecting Real-Time Multilingual Commenting Microservices</h2>
+                <p>High-concurrency streaming, dynamic translation fallback pipelines, and optimistic concurrency version control.</p>
+            </article>
+            <div class="card glass-card post-box-card">
+                <div class="post-box-header">
+                    <img id="currentUserAvatar" src="" class="avatar" alt="Avatar">
+                    <div class="post-box-user-info">
+                        <span id="currentUserName" class="username"></span>
+                        <span id="currentUserLoc" class="user-location"></span>
+                    </div>
+                </div>
+                <form id="mainCommentForm" onsubmit="submitComment(event, null)">
+                    <div class="textarea-wrapper">
+                        <textarea id="mainCommentInput" maxlength="1000" placeholder="Share your thoughts in any language. Type @ to mention users." rows="3" oninput="checkInputTriggers(event)"></textarea>
+                        <div id="mentionDropdown" class="mention-dropdown hidden"></div>
+                    </div>
+                    <div id="captchaBox" class="captcha-box hidden">
+                        <div class="captcha-header"><i class="fa-solid fa-robot"></i> CAPTCHA Challenge (Flooding Triggered)</div>
+                        <div class="captcha-body">
+                            <span id="captchaQuestion"></span>
+                            <input type="text" id="captchaAnswer" placeholder="Answer">
+                            <button type="button" class="btn btn-small" onclick="verifyCaptcha()">Verify</button>
+                        </div>
+                    </div>
+                    <div class="post-box-footer">
+                        <div class="format-help">
+                            <span><i class="fa-solid fa-language"></i> Translate on demand</span>
+                            <span><i class="fa-solid fa-clock"></i> Timed Edits</span>
+                        </div>
+                        <button type="submit" class="btn btn-primary" id="submitCommentBtn">
+                            <i class="fa-solid fa-paper-plane"></i> Post Comment
+                        </button>
+                    </div>
+                </form>
+            </div>
+            <div class="thread-controls">
+                <div class="thread-count"><i class="fa-regular fa-comments"></i> <span id="totalCommentCount">0</span> Comments</div>
+                <div class="sort-controls">
+                    <label><i class="fa-solid fa-arrow-down-short-wide"></i> Sort By:</label>
+                    <select id="sortSelect" onchange="renderComments()">
+                        <option value="newest">Newest First</option>
+                        <option value="oldest">Oldest First</option>
+                        <option value="most_liked">Most Liked</option>
+                        <option value="most_relevant">Most Relevant</option>
+                    </select>
+                </div>
+            </div>
+            <div id="commentsContainer" class="comments-container"></div>
+        </section>
+    </main>
+    <div id="historyModal" class="modal-overlay hidden">
+        <div class="modal-content glass-card">
+            <div class="modal-header">
+                <h3><i class="fa-solid fa-clock-rotate-left"></i> Revision History Vault</h3>
+                <button class="btn-close" onclick="closeModal('historyModal')">&times;</button>
+            </div>
+            <div class="modal-body" id="historyModalBody"></div>
+        </div>
+    </div>
+    <div id="reportModal" class="modal-overlay hidden">
+        <div class="modal-content glass-card">
+            <div class="modal-header">
+                <h3><i class="fa-solid fa-flag text-danger"></i> Report Content</h3>
+                <button class="btn-close" onclick="closeModal('reportModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="reportCommentId">
+                <p>Choose a violation category to flag this comment for admin review:</p>
+                <div class="radio-group">
+                    <label class="radio-card"><input type="radio" name="reportReason" value="Spam / Commercial Ads" checked> Spam / Commercial Ads</label>
+                    <label class="radio-card"><input type="radio" name="reportReason" value="Harassment or Bullying"> Harassment / Bullying</label>
+                    <label class="radio-card"><input type="radio" name="reportReason" value="Offensive Content"> Offensive Content</label>
+                    <label class="radio-card"><input type="radio" name="reportReason" value="Malicious Link / Virus"> Malicious Link / Virus</label>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" onclick="closeModal('reportModal')">Cancel</button>
+                    <button class="btn btn-danger" onclick="submitReport()">Submit Flag</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="editModal" class="modal-overlay hidden">
+        <div class="modal-content glass-card">
+            <div class="modal-header">
+                <h3><i class="fa-solid fa-pen-to-square"></i> Edit Comment</h3>
+                <button class="btn-close" onclick="closeModal('editModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="editCommentId">
+                <input type="hidden" id="editOriginalVersion">
+                <textarea id="editCommentInput" rows="4"></textarea>
+                <div id="editTimeWarning" class="time-warning"></div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" onclick="closeModal('editModal')">Cancel</button>
+                    <button class="btn btn-primary" onclick="saveEditedComment()">Save Revision</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="toastContainer" class="toast-container"></div>
+    <script src="static/js/app.js"></script>
+</body>
+</html>

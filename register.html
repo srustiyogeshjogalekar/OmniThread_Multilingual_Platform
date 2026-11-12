@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#0a0d14">
+    <title>Create account — OmniThread</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="static/css/style.css">
+</head>
+<body class="auth-page" data-theme="dark">
+    <div class="ambient-glow bg-glow-1"></div>
+    <div class="ambient-glow bg-glow-2"></div>
+    <header class="auth-header">
+        <a class="brand auth-brand" href="index.html">
+            <span class="brand-icon"><i class="fa-solid fa-comments"></i></span>
+            <span class="brand-text"><strong>OmniThread</strong><span class="badge badge-pro">Multilingual</span></span>
+        </a>
+        <a class="auth-back-link" href="index.html"><i class="fa-solid fa-arrow-left"></i> Back to discussion</a>
+    </header>
+    <main class="auth-main">
+        <section class="auth-card glass-card" aria-labelledby="registerTitle">
+            <div class="auth-icon"><i class="fa-solid fa-user-plus"></i></div>
+            <p class="auth-eyebrow">GET STARTED</p>
+            <h1 id="registerTitle">Create your account</h1>
+            <p class="auth-subtitle">A global conversation starts with you.</p>
+            <form id="registerForm" class="auth-form">
+                <label for="registerName">Display name</label>
+                <input id="registerName" name="name" type="text" autocomplete="name" minlength="2" maxlength="60" placeholder="Your name" required>
+                <label for="registerEmail">Email address</label>
+                <input id="registerEmail" name="email" type="email" autocomplete="email" placeholder="you@example.com" required>
+                <label for="registerPassword">Password</label>
+                <div class="auth-password-field">
+                    <input id="registerPassword" name="password" type="password" autocomplete="new-password" minlength="8" maxlength="128" placeholder="At least 8 characters" required>
+                    <button class="password-toggle" type="button" data-toggle-password="registerPassword" aria-label="Show password" aria-pressed="false"><i class="fa-regular fa-eye"></i><span>Show</span></button>
+                </div>
+                <label for="registerConfirmPassword">Confirm password</label>
+                <div class="auth-password-field">
+                    <input id="registerConfirmPassword" name="confirmPassword" type="password" autocomplete="new-password" minlength="8" maxlength="128" placeholder="Enter your password again" required>
+                    <button class="password-toggle" type="button" data-toggle-password="registerConfirmPassword" aria-label="Show password" aria-pressed="false"><i class="fa-regular fa-eye"></i><span>Show</span></button>
+                </div>
+                <button class="btn btn-primary auth-submit" type="submit">Create account <i class="fa-solid fa-arrow-right"></i></button>
+                <p id="registerMessage" class="auth-message" role="status" aria-live="polite"></p>
+            </form>
+            <p class="auth-switch">Already have an account? <a href="login.html">Sign in</a></p>
+            <p class="auth-demo-note"><i class="fa-solid fa-circle-info"></i> A salted password verifier is stored in this browser. No server, email verification, or account recovery is configured.</p>
+        </section>
+    </main>
+    <script src="static/js/auth.js"></script>
+</body>
+</html>

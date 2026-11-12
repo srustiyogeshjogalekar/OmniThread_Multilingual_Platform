@@ -1,0 +1,8 @@
+.env
+.env.*
+!.env.example
+__pycache__/
+*.py[cod]
+omnithread.sqlite3
+omnithread.sqlite3-shm
+omnithread.sqlite3-wal
