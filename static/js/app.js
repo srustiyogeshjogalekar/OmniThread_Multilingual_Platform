@@ -254,9 +254,14 @@ function updatePreferredLang(lang) {
 }
 
 function detectLanguage(text) {
-    if (/[\u3040-\u30ff\u3400-\u9fff]/u.test(text)) return 'ja';
+    if (/[\u3040-\u30ff]/u.test(text)) return 'ja';
+    if (/[\u3400-\u9fff]/u.test(text)) return 'zh';
+    if (/[\uac00-\ud7af]/u.test(text)) return 'ko';
+    if (/[\u0600-\u06ff]/u.test(text)) return 'ar';
     if (/[\u0900-\u097f]/u.test(text)) return 'hi';
     if (/[\u0400-\u04ff]/u.test(text)) return 'ru';
+    if (/[ãõç]/iu.test(text) || /(?:^|[^\p{L}])(?:olá|obrigad[oa]s?|você|vocês|não|tudo bem|português)(?:$|[^\p{L}])/iu.test(text)) return 'pt';
+    if (/[äöüß]/iu.test(text)) return 'de';
     if (/[áéíóúñ¿¡]/iu.test(text)) return 'es';
     return 'en';
 }
@@ -700,14 +705,14 @@ function renderCommentCard(comment) {
                 </div>
                 ${comment.version > 1 || comment.history.length ? `<button class="edited-tag" onclick="openHistoryModal('${escapeHtml(comment.id)}')">${comment.version > 1 ? '(Edited · history)' : '(History)'}</button>` : ''}
             </div>
-            <div class="comment-body ${comment.is_deleted ? 'text-muted' : ''}">${formattedText}</div>
+            <div class="comment-body ${comment.is_deleted ? 'text-muted' : ''}" dir="auto">${formattedText}</div>
             ${translatedText ? `
                 <div class="translation-box">
                     <div class="translation-meta">
                         <span>Translated to ${escapeHtml(state.preferredLang.toUpperCase())}</span>
                         <button class="text-link" onclick="toggleOriginalText('${escapeHtml(comment.id)}')">Show original</button>
                     </div>
-                    <div>${escapeHtml(translatedText)}</div>
+                    <div dir="auto">${escapeHtml(translatedText)}</div>
                 </div>
             ` : ''}
             <div class="comment-actions">

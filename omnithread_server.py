@@ -18,7 +18,7 @@ MAX_REQUEST_BYTES = 2 * 1024 * 1024
 MAX_TRANSLATION_TEXT_LENGTH = 1000
 MAX_TRANSLATION_RESPONSE_BYTES = 64 * 1024
 TRANSLATION_TIMEOUT_SECONDS = 8
-SUPPORTED_LANGUAGES = {"en", "es", "ja", "hi", "fr", "ru"}
+SUPPORTED_LANGUAGES = {"en", "es", "ja", "hi", "fr", "ru", "zh", "ar", "de", "pt", "ko"}
 
 
 class OmniThreadHandler(SimpleHTTPRequestHandler):
