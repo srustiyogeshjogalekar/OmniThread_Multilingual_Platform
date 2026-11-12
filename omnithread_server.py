@@ -11,8 +11,8 @@ from urllib.parse import urlsplit
 import sqlite_store
 
 
-HOST = "127.0.0.1"
-PORT = 8000
+HOST = os.environ.get("OMNITHREAD_HOST", "127.0.0.1")
+PORT = int(os.environ.get("OMNITHREAD_PORT", "8000"))
 ROOT = Path(__file__).resolve().parent
 MAX_REQUEST_BYTES = 2 * 1024 * 1024
 MAX_TRANSLATION_TEXT_LENGTH = 1000
